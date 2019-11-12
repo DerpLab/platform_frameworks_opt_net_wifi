@@ -634,7 +634,7 @@ public class WifiNetworkSuggestionsManager {
      * Remove the provided list of network suggestions from the corresponding app's active list.
      */
     public @WifiManager.NetworkSuggestionsStatusCode int remove(
-            List<WifiNetworkSuggestion> networkSuggestions, int uid, String packageName) {
+            List<WifiNetworkSuggestion> networkSuggestions, String packageName) {
         if (mVerboseLoggingEnabled) {
             Log.v(TAG, "Removing " + networkSuggestions.size() + " networks from " + packageName);
         }
@@ -652,13 +652,6 @@ public class WifiNetworkSuggestionsManager {
             Log.e(TAG, "Failed to remove network suggestions for " + packageName
                     + ". Network suggestions not found in active network suggestions");
             return WifiManager.STATUS_NETWORK_SUGGESTIONS_ERROR_REMOVE_INVALID;
-        }
-        if (mWifiPermissionsUtil.checkNetworkCarrierProvisioningPermission(uid)) {
-            // empty list is used to clear everything for the app.
-            if (extNetworkSuggestions.isEmpty()) {
-                extNetworkSuggestions = new HashSet<>(perAppInfo.extNetworkSuggestions);
-            }
-            triggerDisconnectIfServingNetworkSuggestionRemoved(extNetworkSuggestions);
         }
         removeInternal(extNetworkSuggestions, packageName, perAppInfo);
         saveToStore();
@@ -721,7 +714,6 @@ public class WifiNetworkSuggestionsManager {
             Log.v(TAG, "Setting the app " + (approved ? "approved" : "not approved"));
         }
         perAppInfo.hasUserApproved = approved;
-        saveToStore();
     }
 
     /**
@@ -1069,4 +1061,3 @@ public class WifiNetworkSuggestionsManager {
                 + mActiveNetworkSuggestionsMatchingConnection);
     }
 }
-

@@ -82,7 +82,6 @@ public class WifiInjector {
 
     private final Context mContext;
     private final FrameworkFacade mFrameworkFacade = new FrameworkFacade();
-    private final DeviceConfigFacade mDeviceConfigFacade;
     private final HandlerThread mWifiServiceHandlerThread;
     private final HandlerThread mWifiCoreHandlerThread;
     private final HandlerThread mWifiP2pServiceHandlerThread;
@@ -169,7 +168,6 @@ public class WifiInjector {
         sWifiInjector = this;
 
         mContext = context;
-        mDeviceConfigFacade = new DeviceConfigFacade();
         mWifiScoreCard = new WifiScoreCard(mClock,
                 Secure.getString(mContext.getContentResolver(), Secure.ANDROID_ID));
         mSettingsStore = new WifiSettingsStore(mContext);
@@ -204,7 +202,7 @@ public class WifiInjector {
                 mCellularLinkLayerStatsCollector);
         // Modules interacting with Native.
         mWifiMonitor = new WifiMonitor(this);
-        mHalDeviceManager = new HalDeviceManager(mClock, clientModeImplLooper);
+        mHalDeviceManager = new HalDeviceManager(mClock);
         mWifiVendorHal =
                 new WifiVendorHal(mHalDeviceManager, mWifiCoreHandlerThread.getLooper());
         mSupplicantStaIfaceHal =
@@ -607,9 +605,8 @@ public class WifiInjector {
                 mWifiCoreHandlerThread.getLooper(), mFrameworkFacade, mClock, mWifiMetrics,
                 mWifiConfigManager, mWifiConfigStore, clientModeImpl,
                 new ConnectToNetworkNotificationBuilder(mContext, mFrameworkFacade));
-        mWifiLastResortWatchdog = new WifiLastResortWatchdog(this, mContext, mClock,
-                mWifiMetrics, clientModeImpl, clientModeImpl.getHandler().getLooper(),
-                mDeviceConfigFacade);
+        mWifiLastResortWatchdog = new WifiLastResortWatchdog(this, mClock,
+                mWifiMetrics, clientModeImpl, clientModeImpl.getHandler().getLooper());
         return new WifiConnectivityManager(mContext, getScoringParams(),
                 clientModeImpl, this,
                 mWifiConfigManager, clientModeImpl.getWifiInfo(),

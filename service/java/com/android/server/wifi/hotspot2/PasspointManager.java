@@ -313,7 +313,7 @@ public class PasspointManager {
         AppOpsChangedListener appOpsChangedListener = mAppOpsChangedListenerPerApp.remove(
                 packageName);
         if (appOpsChangedListener == null) {
-            Log.i(TAG, "No app ops listener found for " + packageName);
+            Log.wtf(TAG, "No app ops listener found for " + packageName);
             return;
         }
         mAppOps.stopWatchingMode(appOpsChangedListener);
